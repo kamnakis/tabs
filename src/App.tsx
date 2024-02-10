@@ -3,6 +3,7 @@ import {
   HTMLAttributes,
   ReactNode,
   createContext,
+  useCallback,
   useMemo,
   useState,
   useContext,
@@ -34,14 +35,22 @@ const TabsProvider = ({ children }: { children: ReactNode }) => {
   const [controlsContainer, setControlsContainer] = useState<HTMLDivElement>();
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
+  const updateControlsContainer = useCallback((node: HTMLDivElement) => {
+    setControlsContainer(node);
+  }, []);
+
+  const updateActiveTab = useCallback((key: string) => {
+    setActiveTab(key);
+  }, []);
+
   const value = useMemo(() => {
     return {
       activeTab,
       controlsContainer,
-      updateControlsContainer: setControlsContainer,
-      updateActiveTab: setActiveTab,
+      updateControlsContainer,
+      updateActiveTab,
     };
-  }, [controlsContainer, activeTab, setControlsContainer, setActiveTab]);
+  }, [controlsContainer, activeTab, updateControlsContainer, updateActiveTab]);
 
   return <TabsContext.Provider value={value}>{children}</TabsContext.Provider>;
 };
